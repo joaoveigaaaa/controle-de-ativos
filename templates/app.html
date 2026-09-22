@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luxafit — Equipamentos</title>
+
+  <style>
+    :root {
+      --azul: #064d7f;
+      --vermelho: #df2030;
+      --texto: #233343;
+      --cinza: #647484;
+      --borda: #dfe5eb;
+      --fundo: #f5f6f8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body,
+    button,
+    input,
+    select,
+    textarea {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: var(--fundo);
+      color: var(--texto);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select {
+      font-size: 13px;
+    }
+
+    :focus-visible {
+      outline: 3px solid #85b6db;
+      outline-offset: 3px;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .header {
+      background: #fff;
+      border-top: 3px solid var(--azul);
+      border-bottom: 1px solid var(--borda);
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: auto;
+      padding: 12px 28px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .logo {
+      display: block;
+      width: 104px;
+      height: auto;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    nav a {
+      padding: 10px 0;
+      color: var(--cinza);
+      font-size: 13px;
+    }
+
+    nav a:hover {
+      color: var(--azul);
+    }
+
+    .department {
+      margin-left: auto;
+      padding-left: 20px;
+      border-left: 1px solid var(--borda);
+      color: var(--cinza);
+      font-size: 12px;
+    }
+
+    main {
+      max-width: 1400px;
+      margin: auto;
+      padding: 28px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 27px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .breadcrumb {
+      margin-bottom: 20px;
+      color: var(--cinza);
+      font-size: 12px;
+    }
+
+    .page-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 17px;
+      border: 1px solid var(--borda);
+      border-radius: 5px;
+      background: #fff;
+      color: var(--texto);
+      font-size: 13px;
+      font-weight: bold;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .button:hover:not(:disabled) {
+      background: #edf3f7;
+    }
+
+    .primary {
+      background: var(--azul);
+      border-color: var(--azul);
+      color: #fff;
+    }
+
+    .primary:hover:not(:disabled) {
+      background: #033b63;
+    }
+
+    button:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
+    .base-status {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 28px;
+      margin-bottom: 22px;
+      color: var(--cinza);
+      font-size: 12px;
+    }
+
+    .base-status strong {
+      color: var(--texto);
+    }
+
+    .panel {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--borda);
+      border-radius: 7px;
+      background: #fff;
+    }
+
+    .panel-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 17px 22px;
+      border-bottom: 1px solid var(--borda);
+    }
+
+    .panel-title small {
+      color: var(--cinza);
+      font-size: 11px;
+    }
+
+    .panel-body {
+      padding: 22px;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    input:not([type="file"]),
+    select {
+      width: 100%;
+      min-width: 0;
+      min-height: 42px;
+      padding: 10px 12px;
+      border: 1px solid #cbd4dd;
+      border-radius: 5px;
+      background: #fff;
+      color: var(--texto);
+    }
+
+    input::placeholder {
+      color: #83909c;
+    }
+
+    .search {
+      display: flex;
+      gap: 8px;
+    }
+
+    .camera {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--borda);
+    }
+
+    .camera-preview {
+      display: grid;
+      place-items: center;
+      min-height: 150px;
+      margin: 12px 0;
+      padding: 20px;
+      border: 1px solid var(--borda);
+      border-radius: 5px;
+      background: #f4f7f9;
+      color: var(--cinza);
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .camera-preview svg {
+      display: block;
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 10px;
+      color: var(--azul);
+    }
+
+    .camera-preview img {
+      display: block;
+      max-width: 100%;
+      max-height: 220px;
+      object-fit: contain;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      color: var(--cinza);
+      font-size: 12px;
+    }
+
+    input[type="file"]::file-selector-button {
+      margin-right: 10px;
+      padding: 10px 13px;
+      border: 1px solid #cbd4dd;
+      border-radius: 5px;
+      background: #fff;
+      color: var(--azul);
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 260px;
+      padding: 30px;
+      color: var(--cinza);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .record-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin: 0;
+      padding: 22px;
+    }
+
+    .record-details dt {
+      margin-bottom: 4px;
+      color: var(--cinza);
+      font-size: 11px;
+    }
+
+    .record-details dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+      font-size: 14px;
+    }
+
+    .record-title {
+      padding: 18px 22px 0;
+    }
+
+    #cadastro,
+    #importar {
+      margin-bottom: 24px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--borda);
+    }
+
+    .message {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 5px;
+      background: #edf4fa;
+      color: var(--azul);
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .message:empty {
+      display: none;
+    }
+
+    .message.error {
+      background: #fff0ef;
+      color: #b42318;
+    }
+
+    .message.success {
+      background: #edf8f1;
+      color: #17663f;
+    }
+
+    .import-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      align-items: start;
+      gap: 24px;
+    }
+
+    .import-options {
+      display: grid;
+      gap: 12px;
+    }
+
+    .help {
+      margin-top: 8px;
+      color: var(--cinza);
+      font-size: 11px;
+    }
+
+    .scan-candidates {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    details {
+      margin-top: 14px;
+      font-size: 12px;
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--cinza);
+    }
+
+    pre {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+    }
+
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1150px;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 12px;
+    }
+
+    th {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--borda);
+      background: #fafbfc;
+      color: var(--cinza);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--borda);
+      vertical-align: top;
+      overflow-wrap: anywhere;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: #f8fafc;
+    }
+
+    td[colspan] {
+      padding: 35px 20px;
+      color: var(--cinza);
+      text-align: center;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding-top: 24px;
+      color: var(--cinza);
+      font-size: 11px;
+    }
+
+    @media (max-width: 900px) {
+      .department {
+        display: none;
+      }
+
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .header-inner {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 12px 18px;
+      }
+
+      .logo {
+        width: 90px;
+      }
+
+      nav {
+        width: 100%;
+        gap: 17px;
+      }
+
+      nav a {
+        font-size: 12px;
+      }
+
+      main {
+        padding: 20px 14px;
+      }
+
+      h1 {
+        font-size: 23px;
+      }
+
+      .page-title {
+        align-items: flex-start;
+      }
+
+      .panel-title,
+      .panel-body {
+        padding: 18px;
+      }
+
+      .search {
+        flex-direction: column;
+      }
+
+      .form-grid,
+      .import-grid,
+      .record-details {
+        grid-template-columns: 1fr;
+      }
+
+      .form-actions .button {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="#consulta" aria-label="Luxafit — início">
+        <img class="logo" src="/logo_luxafit.png" alt="Luxafit Transportes">
+      </a>
+
+      <nav aria-label="Menu principal">
+        <a href="#consulta">Consulta</a>
+        <a href="#cadastro">Cadastrar</a>
+        <a href="#inventario">Inventário</a>
+        <a href="#importar">Importação</a>
+      </nav>
+
+      <span class="department">Controle de patrimônio · TI</span>
+    </div>
+  </header>
+
+  <main>
+    <p class="breadcrumb">TI / Equipamentos</p>
+
+    <div class="page-title">
+      <h1>Equipamentos</h1>
+      <a class="button primary" href="#cadastro">Novo equipamento</a>
+    </div>
+
+    <div class="base-status">
+      <span>Equipamentos: <strong id="total">—</strong></span>
+      <span>
+        Último cadastro:
+        <strong id="ultima-atualizacao">—</strong>
+      </span>
+    </div>
+
+    <div class="workspace">
+      <section class="panel" id="consulta">
+        <div class="panel-title">
+          <h2>Consultar equipamento</h2>
+        </div>
+
+        <div class="panel-body">
+          <form id="form-consulta">
+            <label for="serie-consulta">Número de série</label>
+
+            <div class="search">
+              <input
+                id="serie-consulta"
+                type="text"
+                placeholder="Digite o número de série"
+                maxlength="100"
+                autocomplete="off"
+                spellcheck="false"
+                required
+              >
+
+              <button
+                id="botao-consultar"
+                class="button primary"
+                type="submit"
+              >
+                Consultar
+              </button>
+            </div>
+          </form>
+
+          <p
+            id="mensagem-consulta"
+            class="message"
+            role="status"
+            aria-live="polite"
+          ></p>
+
+          <div class="camera">
+            <label for="foto">Foto da etiqueta</label>
+
+            <div class="camera-preview" id="preview-foto">
+              <div>
+                <svg
+                  viewBox="0 0 48 48"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  aria-hidden="true"
+                >
+                  <path d="M16 12l3-5h10l3 5h8v27H8V12z"></path>
+                  <circle cx="24" cy="25" r="8"></circle>
+                </svg>
+                Número de série ou código de barras
+              </div>
+            </div>
+
+            <input
+              id="foto"
+              type="file"
+              accept="image/jpeg,image/png"
+              capture="environment"
+            >
+
+            <div style="margin-top:12px">
+              <button
+                id="botao-ler-foto"
+                type="button"
+                class="button"
+              >
+                Ler etiqueta
+              </button>
+            </div>
+
+            <p
+              id="mensagem-foto"
+              class="message"
+              role="status"
+              aria-live="polite"
+            ></p>
+
+            <div id="resultado-foto"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="titulo-ficha">
+        <div class="panel-title">
+          <h2 id="titulo-ficha">Dados do equipamento</h2>
+          <small id="situacao-ficha">Sem seleção</small>
+        </div>
+
+        <div id="ficha" aria-live="polite">
+          <div class="empty">Nenhum equipamento selecionado.</div>
+        </div>
+      </section>
+    </div>
+
+    <section class="panel" id="cadastro">
+      <div class="panel-title">
+        <h2>Cadastrar equipamento</h2>
+        <small>* Obrigatório</small>
+      </div>
+
+      <div class="panel-body">
+        <form id="form-cadastro">
+          <div class="form-grid">
+            <div>
+              <label for="ativo">Ativo *</label>
+              <input
+                id="ativo"
+                name="ativo"
+                type="text"
+                maxlength="100"
+                required
+              >
+            </div>
+
+            <div>
+              <label for="numero-serie">Número de série *</label>
+              <input
+                id="numero-serie"
+                name="numero_serie"
+                type="text"
+                maxlength="100"
+                autocomplete="off"
+                spellcheck="false"
+                required
+              >
+            </div>
+
+            <div>
+              <label for="categoria">Categoria</label>
+              <input
+                id="categoria"
+                name="categoria"
+                type="text"
+                maxlength="100"
+              >
+            </div>
+
+            <div>
+              <label for="status">Status</label>
+              <select id="status" name="status">
+                <option value="">Selecione</option>
+                <option value="Em estoque">Em estoque</option>
+                <option value="Em uso">Em uso</option>
+                <option value="Em manutenção">Em manutenção</option>
+                <option value="Inativo">Inativo</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="matricula">Matrícula</label>
+              <input
+                id="matricula"
+                name="matricula"
+                type="text"
+                maxlength="50"
+              >
+            </div>
+
+            <div>
+              <label for="data-garantia">Data de garantia</label>
+              <input
+                id="data-garantia"
+                name="data_garantia"
+                type="date"
+                min="1000-01-01"
+                max="9999-12-31"
+              >
+            </div>
+
+            <div>
+              <label for="departamento">Departamento</label>
+              <input
+                id="departamento"
+                name="departamento"
+                type="text"
+                maxlength="100"
+              >
+            </div>
+
+            <div>
+              <label for="responsavel">Responsável</label>
+              <input
+                id="responsavel"
+                name="responsavel"
+                type="text"
+                maxlength="150"
+              >
+            </div>
+
+            <div>
+              <label for="empresa">Sede</label>
+              <input
+                id="empresa"
+                name="empresa"
+                type="text"
+                maxlength="100"
+              >
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button
+              id="botao-limpar"
+              class="button"
+              type="reset"
+            >
+              Limpar campos
+            </button>
+
+            <button
+              id="salvar"
+              class="button primary"
+              type="submit"
+            >
+              Salvar equipamento
+            </button>
+          </div>
+
+          <p
+            id="mensagem-cadastro"
+            class="message"
+            role="status"
+            aria-live="polite"
+          ></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="panel" id="importar">
+      <div class="panel-title">
+        <h2>Importar inventário</h2>
+        <small>Excel .xlsx</small>
+      </div>
+
+      <div class="panel-body">
+        <div class="import-grid">
+          <div>
+            <label for="planilha">Arquivo do computador</label>
+            <input
+              id="planilha"
+              type="file"
+              accept=".xlsx"
+            >
+
+            <p class="help">
+              Cabeçalhos na primeira linha. Série e matrícula como texto.
+            </p>
+          </div>
+
+          <div class="import-options">
+            <div>
+              <label for="aba-excel">Aba</label>
+              <select id="aba-excel">
+                <option value="">Selecione um arquivo</option>
+              </select>
+            </div>
+
+            <p id="resumo-excel" class="help"></p>
+
+            <button
+              id="botao-importar"
+              class="button primary"
+              type="button"
+            >
+              Importar equipamentos
+            </button>
+          </div>
+        </div>
+
+        <p
+          id="mensagem-excel"
+          class="message"
+          role="status"
+          aria-live="polite"
+        ></p>
+      </div>
+    </section>
+
+    <section class="panel" id="inventario">
+      <div class="panel-title">
+        <h2>Inventário</h2>
+
+        <div style="display:flex;align-items:center;gap:15px">
+          <small id="contador-tabela">—</small>
+          <button
+            id="atualizar-inventario"
+            class="button"
+            type="button"
+          >
+            Atualizar
+          </button>
+        </div>
+      </div>
+
+      <div
+        class="table-scroll"
+        role="region"
+        aria-label="Inventário com rolagem horizontal"
+        tabindex="0"
+      >
+        <table aria-label="Equipamentos cadastrados">
+          <thead>
+            <tr>
+              <th scope="col">Ativo</th>
+              <th scope="col">Número de série</th>
+              <th scope="col">Categoria</th>
+              <th scope="col">Status</th>
+              <th scope="col">Matrícula</th>
+              <th scope="col">Data de garantia</th>
+              <th scope="col">Departamento</th>
+              <th scope="col">Responsável</th>
+              <th scope="col">Sede</th>
+            </tr>
+          </thead>
+
+          <tbody id="linhas-inventario">
+            <tr>
+              <td colspan="9">Carregando inventário...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p
+        id="mensagem-inventario"
+        class="message"
+        role="status"
+        aria-live="polite"
+        style="margin:14px 20px"
+      ></p>
+    </section>
+
+    <footer>
+      <span>Luxafit Transportes</span>
+      <span>Controle de equipamentos</span>
+    </footer>
+  </main>
+
+  <script>
+    "use strict";
+
+    const $ = (seletor) => document.querySelector(seletor);
+
+    const COLUNAS = [
+      ["ativo", "Ativo"],
+      ["numero_serie", "Número de série"],
+      ["categoria", "Categoria"],
+      ["status", "Status"],
+      ["matricula", "Matrícula"],
+      ["data_garantia", "Data de garantia"],
+      ["departamento", "Departamento"],
+      ["responsavel", "Responsável"],
+      ["sede", "Sede"]
+    ];
+
+    let versaoInventario = 0;
+    let versaoConsulta = 0;
+    let versaoExcel = 0;
+    let excelPronto = false;
+    let importando = false;
+    let salvando = false;
+    let lendoFoto = false;
+    let urlFoto = null;
+
+    function criar(tag, texto, classe) {
+      const item = document.createElement(tag);
+
+      if (texto !== undefined) {
+        item.textContent = texto;
+      }
+
+      if (classe) {
+        item.className = classe;
+      }
+
+      return item;
+    }
+
+    function mensagem(id, texto, tipo = "") {
+      const item = document.getElementById(id);
+      item.textContent = texto;
+      item.className = `message ${tipo}`.trim();
+    }
+
+    function textoErro(erro) {
+      return erro instanceof Error
+        ? erro.message
+        : "Não foi possível concluir a operação.";
+    }
+
+    async function api(url, opcoes = {}) {
+      if (location.protocol === "file:") {
+        throw new Error(
+          "Abra o sistema em http://127.0.0.1:5000 com o Python em execução."
+        );
+      }
+
+      let resposta;
+
+      try {
+        resposta = await fetch(url, {
+          cache: "no-store",
+          ...opcoes
+        });
+      } catch {
+        throw new Error(
+          "Sem conexão com o Python. Confira se o comando python app.py está rodando."
+        );
+      }
+
+      let dados;
+
+      try {
+        dados = await resposta.json();
+      } catch {
+        throw new Error(
+          `Resposta inválida do servidor (HTTP ${resposta.status}). Confira o terminal do Python.`
+        );
+      }
+
+      if (!resposta.ok) {
+        throw new Error(
+          dados.erro || `Erro no servidor: HTTP ${resposta.status}.`
+        );
+      }
+
+      return dados;
+    }
+
+    function valor(registro, campo) {
+      const conteudo = registro[campo];
+
+      if (
+        conteudo === null ||
+        conteudo === undefined ||
+        conteudo === ""
+      ) {
+        return "—";
+      }
+
+      if (
+        campo === "data_garantia" &&
+        /^\d{4}-\d{2}-\d{2}$/.test(String(conteudo))
+      ) {
+        return String(conteudo).split("-").reverse().join("/");
+      }
+
+      return String(conteudo);
+    }
+
+    function linhaVazia(texto) {
+      const linha = criar("tr");
+      const celula = criar("td", texto);
+
+      celula.colSpan = COLUNAS.length;
+      linha.append(celula);
+
+      return linha;
+    }
+
+    function renderizarInventario(dados) {
+      const corpo = $("#linhas-inventario");
+      const fragmento = document.createDocumentFragment();
+
+      $("#total").textContent = dados.registros.length;
+
+      $("#contador-tabela").textContent =
+        `${dados.registros.length} equipamento(s)`;
+
+      $("#ultima-atualizacao").textContent =
+        dados.ultimo_cadastro || "Sem data registrada";
+
+      if (!dados.registros.length) {
+        fragmento.append(
+          linhaVazia("Nenhum equipamento cadastrado.")
+        );
+      } else {
+        for (const registro of dados.registros) {
+          const linha = criar("tr");
+
+          for (const [campo] of COLUNAS) {
+            linha.append(criar("td", valor(registro, campo)));
+          }
+
+          fragmento.append(linha);
+        }
+      }
+
+      corpo.replaceChildren(fragmento);
+    }
+
+    async function carregarInventario() {
+      const versao = ++versaoInventario;
+
+      try {
+        const dados = await api("/api/equipamentos");
+
+        if (versao !== versaoInventario) return;
+
+        if (!Array.isArray(dados.registros)) {
+          throw new Error("O servidor não retornou uma lista de equipamentos.");
+        }
+
+        renderizarInventario(dados);
+        mensagem("mensagem-inventario", "");
+      } catch (erro) {
+        if (versao !== versaoInventario) return;
+
+        $("#contador-tabela").textContent = "Falha ao atualizar";
+
+        mensagem(
+          "mensagem-inventario",
+          textoErro(erro),
+          "error"
+        );
+
+        if ($("#total").textContent === "—") {
+          $("#linhas-inventario").replaceChildren(
+            linhaVazia("Inventário indisponível.")
+          );
+        }
+
+        throw erro;
+      }
+    }
+
+    function limparFicha(texto) {
+      $("#ficha").replaceChildren(
+        criar("div", texto, "empty")
+      );
+
+      $("#situacao-ficha").textContent = "Sem seleção";
+    }
+
+    function mostrarFicha(registros) {
+      const ficha = $("#ficha");
+      ficha.replaceChildren();
+
+      if (!registros.length) {
+        limparFicha("Número de série não encontrado.");
+        return;
+      }
+
+      $("#situacao-ficha").textContent =
+        `${registros.length} registro(s)`;
+
+      for (const [indice, registro] of registros.entries()) {
+        if (registros.length > 1) {
+          ficha.append(
+            criar(
+              "h3",
+              `Registro ${indice + 1}`,
+              "record-title"
+            )
+          );
+        }
+
+        const lista = criar("dl", undefined, "record-details");
+
+        for (const [campo, titulo] of COLUNAS) {
+          const grupo = criar("div");
+
+          grupo.append(
+            criar("dt", titulo),
+            criar("dd", valor(registro, campo))
+          );
+
+          lista.append(grupo);
+        }
+
+        ficha.append(lista);
+      }
+    }
+
+    async function consultarSerie(serie) {
+      const versao = ++versaoConsulta;
+
+      limparFicha("Consultando...");
+      mensagem("mensagem-consulta", "");
+
+      try {
+        const dados = await api(
+          `/api/consulta?serie=${encodeURIComponent(serie.trim())}`
+        );
+
+        if (versao !== versaoConsulta) return;
+
+        mostrarFicha(dados.registros);
+
+        if (dados.registros.length > 1) {
+          mensagem(
+            "mensagem-consulta",
+            "A série aparece em mais de um registro. Confira as fichas."
+          );
+        }
+      } catch (erro) {
+        if (versao !== versaoConsulta) return;
+
+        limparFicha("Consulta indisponível.");
+
+        mensagem(
+          "mensagem-consulta",
+          textoErro(erro),
+          "error"
+        );
+      }
+    }
+
+    $("#form-consulta").addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+
+      const serie = $("#serie-consulta").value.trim();
+      if (!serie) return;
+
+      const botao = $("#botao-consultar");
+
+      botao.disabled = true;
+      botao.textContent = "Consultando...";
+
+      try {
+        await consultarSerie(serie);
+      } finally {
+        botao.disabled = false;
+        botao.textContent = "Consultar";
+      }
+    });
+
+    $("#form-cadastro").addEventListener("submit", async (evento) => {
+      evento.preventDefault();
+
+      if (salvando) return;
+
+      const formulario = evento.currentTarget;
+      if (!formulario.reportValidity()) return;
+
+      const dados = Object.fromEntries(
+        new FormData(formulario)
+      );
+
+      for (const campo of Object.keys(dados)) {
+        dados[campo] = String(dados[campo]).trim();
+      }
+
+      dados.numero_serie = dados.numero_serie.toUpperCase();
+
+      if (!dados.ativo || !dados.numero_serie) {
+        mensagem(
+          "mensagem-cadastro",
+          "Preencha o ativo e o número de série.",
+          "error"
+        );
+        return;
+      }
+
+      if (dados.data_garantia) {
+        const ano = Number(dados.data_garantia.slice(0, 4));
+
+        if (ano < 1000 || ano > 9999) {
+          mensagem(
+            "mensagem-cadastro",
+            "Confira o ano da data de garantia.",
+            "error"
+          );
+          return;
+        }
+      }
+
+      salvando = true;
+
+      const controles = [
+        ...formulario.querySelectorAll("input, select, button")
+      ];
+
+      controles.forEach((item) => item.disabled = true);
+      $("#salvar").textContent = "Salvando...";
+
+      mensagem("mensagem-cadastro", "Salvando equipamento...");
+
+      try {
+        await api("/api/equipamentos", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(dados)
+        });
+
+        formulario.reset();
+
+        mensagem(
+          "mensagem-cadastro",
+          "Equipamento cadastrado.",
+          "success"
+        );
+
+        versaoConsulta++;
+        mostrarFicha([dados]);
+        $("#serie-consulta").value = dados.numero_serie;
+
+        try {
+          await carregarInventario();
+        } catch {
+          mensagem(
+            "mensagem-cadastro",
+            "Equipamento salvo. Clique em Atualizar para recarregar o inventário.",
+            "success"
+          );
+        }
+      } catch (erro) {
+        
+        mensagem(
+          "mensagem-cadastro",
+          textoErro(erro),
+          "error"
+        );
+      } finally {
+        controles.forEach((item) => item.disabled = false);
+        $("#salvar").textContent = "Salvar equipamento";
+        salvando = false;
+      }
+    });
+
+    $("#form-cadastro").addEventListener("reset", () => {
+      mensagem("mensagem-cadastro", "");
+    });
+
+    $("#atualizar-inventario").addEventListener("click", async () => {
+      const botao = $("#atualizar-inventario");
+
+      botao.disabled = true;
+      botao.textContent = "Atualizando...";
+
+      try {
+        await carregarInventario();
+      } catch {
+       
+      } finally {
+        botao.disabled = false;
+        botao.textContent = "Atualizar";
+      }
+    });
+
+    function dadosExcel(acao) {
+      const arquivo = $("#planilha").files[0];
+
+      if (!arquivo) {
+        throw new Error("Escolha uma planilha do computador.");
+      }
+
+      if (!arquivo.name.toLowerCase().endsWith(".xlsx")) {
+        throw new Error("Selecione um arquivo no formato .xlsx.");
+      }
+
+      if (arquivo.size > 20 * 1024 * 1024) {
+        throw new Error("A planilha deve ter até 20 MB.");
+      }
+
+      const dados = new FormData();
+
+      dados.append("arquivo", arquivo);
+      dados.append("aba", $("#aba-excel").value);
+      dados.append("acao", acao);
+
+      return dados;
+    }
+
+    async function visualizarExcel() {
+      const versao = ++versaoExcel;
+      excelPronto = false;
+
+      mensagem("mensagem-excel", "Lendo a planilha...");
+
+      try {
+        const dados = await api("/api/excel", {
+          method: "POST",
+          body: dadosExcel("visualizar")
+        });
+
+        if (versao !== versaoExcel) return;
+
+        const seletor = $("#aba-excel");
+        seletor.replaceChildren();
+
+        for (const nome of dados.abas) {
+          const opcao = criar("option", nome);
+          opcao.value = nome;
+          seletor.append(opcao);
+        }
+
+        seletor.value = dados.aba;
+
+        $("#resumo-excel").textContent =
+          `${dados.quantidade} linha(s) na aba selecionada.`;
+
+        excelPronto = true;
+        mensagem("mensagem-excel", "");
+      } catch (erro) {
+        if (versao !== versaoExcel) return;
+
+        $("#resumo-excel").textContent = "";
+
+        mensagem(
+          "mensagem-excel",
+          textoErro(erro),
+          "error"
+        );
+      }
+    }
+
+    $("#planilha").addEventListener("change", () => {
+      versaoExcel++;
+      excelPronto = false;
+
+      $("#aba-excel").replaceChildren();
+      $("#resumo-excel").textContent = "";
+
+      if ($("#planilha").files[0]) {
+        visualizarExcel();
+      } else {
+        mensagem("mensagem-excel", "");
+      }
+    });
+
+    $("#aba-excel").addEventListener("change", () => {
+      visualizarExcel();
+    });
+
+    $("#botao-importar").addEventListener("click", async () => {
+      if (importando) return;
+
+      if (!$("#planilha").files[0]) {
+        mensagem(
+          "mensagem-excel",
+          "Escolha uma planilha do computador.",
+          "error"
+        );
+        $("#planilha").focus();
+        return;
+      }
+
+      if (!excelPronto) {
+        mensagem(
+          "mensagem-excel",
+          "Aguarde a leitura da planilha. Se houve erro, selecione o arquivo novamente.",
+          "error"
+        );
+        return;
+      }
+
+      let formulario;
+
+      try {
+        formulario = dadosExcel("importar");
+      } catch (erro) {
+        mensagem("mensagem-excel", textoErro(erro), "error");
+        return;
+      }
+
+      importando = true;
+
+      $("#planilha").disabled = true;
+      $("#aba-excel").disabled = true;
+      $("#botao-importar").disabled = true;
+      $("#botao-importar").textContent = "Importando...";
+
+      mensagem("mensagem-excel", "Importando equipamentos...");
+
+      try {
+        const dados = await api("/api/excel", {
+          method: "POST",
+          body: formulario
+        });
+
+        const resumo =
+          `${dados.importados} equipamento(s) importado(s). ` +
+          `${dados.ignorados} série(s) já existente(s) ignorada(s).`;
+
+        mensagem("mensagem-excel", resumo, "success");
+
+        try {
+          await carregarInventario();
+        } catch {
+          mensagem(
+            "mensagem-excel",
+            resumo + " Clique em Atualizar para recarregar o inventário.",
+            "success"
+          );
+        }
+      } catch (erro) {
+        mensagem("mensagem-excel", textoErro(erro), "error");
+      } finally {
+        $("#planilha").disabled = false;
+        $("#aba-excel").disabled = false;
+        $("#botao-importar").disabled = false;
+        $("#botao-importar").textContent = "Importar equipamentos";
+        importando = false;
+      }
+    });
+
+    $("#foto").addEventListener("change", () => {
+      const arquivo = $("#foto").files[0];
+
+      $("#resultado-foto").replaceChildren();
+      mensagem("mensagem-foto", "");
+
+      if (urlFoto) {
+        URL.revokeObjectURL(urlFoto);
+        urlFoto = null;
+      }
+
+      if (!arquivo) {
+        $("#preview-foto").textContent = "Foto da etiqueta";
+        return;
+      }
+
+      urlFoto = URL.createObjectURL(arquivo);
+
+      const imagem = document.createElement("img");
+      imagem.src = urlFoto;
+      imagem.alt = "Foto selecionada da etiqueta";
+
+      imagem.onerror = () => {
+        $("#preview-foto").textContent = "Não foi possível visualizar a foto.";
+      };
+
+      $("#preview-foto").replaceChildren(imagem);
+    });
+
+    $("#botao-ler-foto").addEventListener("click", async () => {
+      if (lendoFoto) return;
+
+      const arquivo = $("#foto").files[0];
+
+      if (!arquivo) {
+        mensagem(
+          "mensagem-foto",
+          "Selecione ou tire uma foto da etiqueta.",
+          "error"
+        );
+        $("#foto").focus();
+        return;
+      }
+
+      if (arquivo.size > 20 * 1024 * 1024) {
+        mensagem(
+          "mensagem-foto",
+          "A foto deve ter até 20 MB.",
+          "error"
+        );
+        return;
+      }
+
+      lendoFoto = true;
+
+      $("#foto").disabled = true;
+      $("#botao-ler-foto").disabled = true;
+      $("#botao-ler-foto").textContent = "Lendo...";
+
+      $("#resultado-foto").replaceChildren();
+
+      mensagem(
+        "mensagem-foto",
+        "Lendo a etiqueta. A primeira leitura pode demorar."
+      );
+
+      const formulario = new FormData();
+      formulario.append("foto", arquivo);
+
+      try {
+        const dados = await api("/api/scan", {
+          method: "POST",
+          body: formulario
+        });
+
+        const resultado = $("#resultado-foto");
+
+        const detalhes = criar("details");
+        detalhes.append(
+          criar("summary", "Texto e códigos reconhecidos")
+        );
+
+        detalhes.append(
+          criar(
+            "pre",
+            dados.textos.join("\n") || "Nenhum texto reconhecido."
+          )
+        );
+
+        resultado.append(detalhes);
+
+        if (!dados.series.length) {
+          mensagem(
+            "mensagem-foto",
+            "Nenhuma série cadastrada foi identificada. Tente outra foto ou digite a série."
+          );
+          return;
+        }
+
+        mensagem(
+          "mensagem-foto",
+          "Confira a etiqueta e selecione a série para consultar.",
+          "success"
+        );
+
+        const candidatos = criar(
+          "div",
+          undefined,
+          "scan-candidates"
+        );
+
+        for (const serie of dados.series) {
+          const botao = criar("button", serie, "button primary");
+          botao.type = "button";
+
+          botao.addEventListener("click", async () => {
+            $("#serie-consulta").value = serie;
+            botao.disabled = true;
+
+            try {
+              await consultarSerie(serie);
+            } finally {
+              botao.disabled = false;
+            }
+          });
+
+          candidatos.append(botao);
+        }
+
+        resultado.append(candidatos);
+      } catch (erro) {
+        mensagem("mensagem-foto", textoErro(erro), "error");
+      } finally {
+        $("#foto").disabled = false;
+        $("#botao-ler-foto").disabled = false;
+        $("#botao-ler-foto").textContent = "Ler etiqueta";
+        lendoFoto = false;
+      }
+    });
+
+    carregarInventario().catch(() => {});
+  </script>
+</body>
+</html>
