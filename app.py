@@ -1,4 +1,3 @@
-"""Controle de equipamentos no MySQL existente. Não cria nem modifica a estrutura de tabelas."""
 from datetime import date, datetime
 from decimal import Decimal
 import json
