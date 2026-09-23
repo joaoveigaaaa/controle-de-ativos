@@ -1,22 +1,26 @@
-# Controle de ativos
+📊 Sistema de Controle de Ativos e Inventário de TI
+Uma aplicação web completa desenvolvida para gerenciar o inventário de ativos e equipamentos de TI de forma segura, prática e eficiente. O sistema permite o cadastro, consulta, atualização e remoção de registros integrados diretamente a uma base de dados MySQL, além de contar com suporte ao processamento e tratamento automatizado de planilhas Excel.
 
-Sistema em Python e Flask para consultar e cadastrar equipamentos no MySQL, escanear números de série com a câmera e importar/exportar Excel.
+🚀 Funcionalidades
+Gestão Completa de Ativos (CRUD): Visualização, cadastro, edição e exclusão de equipamentos de TI.
 
-## Executar no Windows
+Integração com MySQL: Conexão robusta e parametrizada com suporte a transações seguras.
 
-1. Instale Python 3.13.
-2. Coloque seu arquivo `.env` na pasta do projeto com a configuração do MySQL existente.
-3. Execute `iniciar.bat`. O navegador abre automaticamente no endereço local disponível.
+Tratamento de Dados de Excel: Script Python automatizado (inventario.py) para leitura, higienização e normalização de dados advindos de planilhas complexas ou desorganizadas.
 
-Os arquivos `.env`, ambientes virtuais e bancos locais não são versionados.
+Segurança de Acesso: Restrição de acesso local e proteção contra requisições de origens externas não autorizadas (CORS/Headers de segurança).
 
-Consulte [LEIA-ME.md](LEIA-ME.md) para configurar tabela e colunas, operar o scanner, importar planilhas e entender a consolidação de séries repetidas na exportação.
+Interface Intuitiva: Painel web amigável com suporte a imagens estáticas e respostas em tempo real.
 
-## Testes
+🛠️ Tecnologias Utilizadas
+Linguagem: Python 3.10+
 
-```powershell
-.\.venv\Scripts\python -m unittest discover -s tests -v
-node --test tests/camera.test.cjs tests/excel-ui.test.cjs
-```
+Framework Web: Flask
 
-Os testes simulam o MySQL e a câmera. A conexão real e a captura física dependem da configuração e dos dispositivos disponíveis no ambiente de execução.
+Servidor WSGI: Waitress
+
+Banco de Dados: MySQL
+
+Manipulação de Dados: Pandas / Openpyxl
+
+Front-end: HTML5
