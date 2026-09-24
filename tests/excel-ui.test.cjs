@@ -27,14 +27,13 @@ test('HTTP 405 permanece visível e importação fica bloqueada', async()=>{
   await app.get('botao-importar').listeners.click();
   assert.equal(app.get('mensagem-excel').textContent,message);
 });
-test('leitura concluída preenche abas e habilita importação',async()=>{
+test('leitura concluída usa primeira aba e habilita importação sem seletor',async()=>{
   const app=setup(async(url,options)=>{
     assert.equal(url,'/api/excel');assert.equal(options.method,'POST');
     return {status:200,ok:true,json:async()=>({abas:['Inventário','Filial'],aba:'Inventário',quantidade:4})};
   });
   await app.preview();
-  assert.equal(app.get('aba-excel').children.length,2);
-  assert.equal(app.get('aba-excel').value,'Inventário');
+  assert.equal(app.elements['aba-excel'],undefined);
   assert.equal(app.get('botao-importar').disabled,false);
   assert.match(app.get('resumo-excel').textContent,/4 linha/);
 });

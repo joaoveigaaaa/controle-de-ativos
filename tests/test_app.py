@@ -15,7 +15,7 @@ class InventoryTests(unittest.TestCase):
         self.records = []
         self.connection = MagicMock()
         self.cursor = self.connection.cursor.return_value
-        self.columns = [dict(Field=('ativos' if f == 'numero_serie' else 'empresa' if f == 'sede' else f), Null='YES', Default=None, Extra='') for f in FIELDS]
+        self.columns = [dict(Field=('numero' if f == 'numero_serie' else 'empresa' if f == 'sede' else f), Null='YES', Default=None, Extra='') for f in FIELDS]
         self.cursor.execute.side_effect = self.execute
         self.connection.start_transaction.side_effect = self.begin
         self.connection.rollback.side_effect = self.rollback
@@ -32,7 +32,7 @@ class InventoryTests(unittest.TestCase):
         if sql.startswith('SHOW COLUMNS'):
             rows = self.columns
         elif sql.startswith('SELECT'):
-            rows = [r for r in self.records if r['ativos'] == args[0]] if args else self.records
+            rows = [r for r in self.records if r['numero'] == args[0]] if args else self.records
         elif sql.startswith('INSERT'):
             columns = [x.strip().strip('`') for x in sql.split('(', 1)[1].split(')', 1)[0].split(',')]
             self.records.append(dict(zip(columns, args)))
@@ -55,12 +55,33 @@ class InventoryTests(unittest.TestCase):
 
     def test_register_lookup_and_inventory_contract(self):
         self.assertEqual(self.add().status_code, 201)
-        self.assertEqual(self.records[0]['ativos'], '00001')
+        self.assertEqual(self.records[0]['numero'], '00001')
         self.assertEqual(self.records[0]['empresa'], 'Matriz')
         lookup = self.client.get('/api/consulta?serie=00001').json['registros'][0]
         self.assertEqual(lookup['sede'], 'Matriz')
         self.assertEqual(lookup['numero_serie'], '00001')
         self.assertEqual(len(self.client.get('/api/equipamentos').json['registros']), 1)
+
+    def test_connection_check_is_read_only(self):
+        result = self.client.get('/api/conexao')
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result.json['tabela'], 'ativos')
+        self.assertEqual(result.json['coluna_serie'], 'numero')
+        self.assertTrue(all(call.args[0].startswith('SHOW COLUMNS') for call in self.cursor.execute.call_args_list))
+        self.connection.commit.assert_not_called()
+        self.assertEqual(self.records, [])
+
+    def test_company_schema_department_and_responsible(self):
+        for column in self.columns:
+            if column['Field'] == 'departamento': column['Field'] = 'dp'
+            if column['Field'] == 'responsavel': column['Field'] = 'nome_responsavel'
+        result = self.add('AB09XZ001', departamento='TI', responsavel='Maria')
+        self.assertEqual(result.status_code, 201, result.json)
+        self.assertEqual(self.records[0]['dp'], 'TI')
+        self.assertEqual(self.records[0]['nome_responsavel'], 'Maria')
+        item = self.client.get('/api/consulta?serie=AB09XZ001').json['registros'][0]
+        self.assertEqual(item['numero_serie'], 'AB09XZ001')
+        self.assertEqual(item['departamento'], 'TI')
 
     def test_duplicate_rejected(self):
         self.add()
@@ -90,6 +111,31 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn('Linha 3', response.json['erro'])
         self.assertEqual(self.records, [])
+
+    def test_import_finds_headers_after_title_and_accepts_database_names(self):
+        rows = [['Inventário da empresa'], [], ['Equipamento', 'numero', 'DP', 'Nome Responsável'], ['PC', '00AB19', 'TI', 'Ana']]
+        response = self.excel(rows)
+        self.assertEqual(response.status_code, 200, response.json)
+        self.assertEqual(self.records[0]['numero'], '00AB19')
+        self.assertEqual(self.records[0]['departamento'], 'TI')
+
+    def test_sales_workbook_has_specific_error_and_no_database_access(self):
+        response = self.excel([['VENDAS'], ['DATA', 'CLIENTE', 'VALOR', 'DATA PGTO', 'FORMA PGTO']], 'visualizar')
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('planilha é de vendas', response.json['erro'])
+        self.connect.assert_not_called()
+
+    def test_duplicate_aliases_identify_the_column(self):
+        response = self.excel([['Ativo', 'Serial', 'Número de série'], ['PC', 'A', 'B']])
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('mais de uma coluna para Número de série', response.json['erro'])
+        self.connect.assert_not_called()
+
+    def test_missing_serial_header_is_explicit(self):
+        response = self.excel([['Equipamento', 'Categoria'], ['PC', 'Computadores']])
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('colunas obrigatórias: Número de série.', response.json['erro'])
+        self.connect.assert_not_called()
 
     def test_db_failure_rolls_back_import(self):
         original = self.execute
@@ -121,9 +167,9 @@ class InventoryTests(unittest.TestCase):
     def test_export_deduplicates_series_and_keeps_all_columns(self):
         self.columns += [dict(Field='id', Null='NO', Default=None, Extra='auto_increment'), dict(Field='modelo', Null='YES', Default=None, Extra='')]
         self.records[:] = [
-            dict(id=1, ativo='Notebook', ativos=' ab001 ', empresa='Matriz', responsavel='Ana', modelo='M1'),
-            dict(id=2, ativo='Notebook', ativos='AB001', empresa='Filial', responsavel='', modelo='M1'),
-            dict(id=3, ativo='Monitor', ativos='00002', empresa='Matriz', modelo='M2'),
+            dict(id=1, ativo='Notebook', numero=' ab001 ', empresa='Matriz', responsavel='Ana', modelo='M1'),
+            dict(id=2, ativo='Notebook', numero='AB001', empresa='Filial', responsavel='', modelo='M1'),
+            dict(id=3, ativo='Monitor', numero='00002', empresa='Matriz', modelo='M2'),
         ]
         response = self.client.get('/api/excel/exportar')
         self.assertEqual(response.headers['X-Export-Registros'], '2')
@@ -143,7 +189,7 @@ class InventoryTests(unittest.TestCase):
         book.close()
 
     def test_export_does_not_merge_distinct_items_without_serial(self):
-        self.records[:] = [dict(ativo='PC', ativos='', empresa='Matriz'), dict(ativo='Monitor', ativos='', empresa='Matriz')]
+        self.records[:] = [dict(ativo='PC', numero='', empresa='Matriz'), dict(ativo='Monitor', numero='', empresa='Matriz')]
         response = self.client.get('/api/excel/exportar')
         self.assertEqual(response.headers['X-Export-Registros'], '2')
 

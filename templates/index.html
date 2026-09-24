@@ -547,8 +547,8 @@
   <header class="header">
     <div class="header-inner">
       <a href="#consulta" aria-label="Luxafit — início">
-    <img src="/logo_luxafit.png" alt="Luxafit" class="logo">
-</a>
+        <img class="logo" src="/" alt="Luxafit Transportes" width="198" height="178">
+      </a>
 
       <nav aria-label="Menu principal">
         <a href="#consulta">Consulta</a>
@@ -557,7 +557,7 @@
         <a href="#importar">Importação</a>
       </nav>
 
-      <span class="department">Controle de ativos · TI</span>
+      <span class="department">Controle de patrimônio · TI</span>
     </div>
   </header>
 
@@ -626,8 +626,12 @@
             <div class="form-actions" style="justify-content:flex-start">
               <button id="iniciar-camera" type="button" class="button primary">Iniciar câmera</button>
               <button id="parar-camera" type="button" class="button" disabled>Parar câmera</button>
+              <button id="ler-texto" type="button" class="button">Ler série impressa</button>
             </div>
             <p id="camera-status" class="message" role="status" aria-live="polite">Clique em Iniciar câmera e permita o acesso no navegador.</p>
+            <p class="help">Código de barras/QR: leitura automática. Letras e números impressos: aproxime a câmera, clique em Ler série impressa e confira a série reconhecida.</p>
+            <p id="texto-status" class="message" role="status" aria-live="polite"></p>
+            <div id="series-reconhecidas" class="scan-candidates"></div>
           </div>
         </div>
       </section>
@@ -801,12 +805,7 @@
           </div>
 
           <div class="import-options">
-            <div>
-              <label for="aba-excel">Aba</label>
-              <select id="aba-excel">
-                <option value="">Selecione um arquivo</option>
-              </select>
-            </div>
+            <p class="help">A primeira aba da planilha será importada automaticamente.</p>
 
             <p id="resumo-excel" class="help"></p>
 
@@ -894,5 +893,6 @@
   <script src="/static/equipamentos.js" defer></script>
   <script src="/static/vendor/html5-qrcode.min.js" defer></script>
   <script src="/static/live-scanner.js" defer></script>
+  <script src="/static/text-scanner.js" defer></script>
 </body>
 </html>

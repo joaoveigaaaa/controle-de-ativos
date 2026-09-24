@@ -424,7 +424,6 @@
       const dados = new FormData();
 
       dados.append("arquivo", arquivo);
-      dados.append("aba", $("#aba-excel").value);
       dados.append("acao", acao);
 
       return dados;
@@ -445,17 +444,6 @@
         });
 
         if (versao !== versaoExcel) return;
-
-        const seletor = $("#aba-excel");
-        seletor.replaceChildren();
-
-        for (const nome of dados.abas) {
-          const opcao = criar("option", nome);
-          opcao.value = nome;
-          seletor.append(opcao);
-        }
-
-        seletor.value = dados.aba;
 
         $("#resumo-excel").textContent =
           `${dados.quantidade} linha(s) na aba selecionada.`;
@@ -486,7 +474,6 @@
       $("#botao-importar").disabled = true;
       $("#botao-importar").textContent = "Importar equipamentos";
 
-      $("#aba-excel").replaceChildren();
       $("#resumo-excel").textContent = "";
 
       if ($("#planilha").files[0]) {
@@ -494,10 +481,6 @@
       } else {
         mensagem("mensagem-excel", "");
       }
-    });
-
-    $("#aba-excel").addEventListener("change", () => {
-      visualizarExcel();
     });
 
     $("#botao-importar").addEventListener("click", async () => {
@@ -530,7 +513,6 @@
       importando = true;
 
       $("#planilha").disabled = true;
-      $("#aba-excel").disabled = true;
       $("#botao-importar").disabled = true;
       $("#botao-importar").textContent = "Importando...";
 
@@ -561,7 +543,6 @@
         mensagem("mensagem-excel", textoErro(erro), "error");
       } finally {
         $("#planilha").disabled = false;
-        $("#aba-excel").disabled = false;
         $("#botao-importar").disabled = false;
         $("#botao-importar").textContent = "Importar equipamentos";
         importando = false;
