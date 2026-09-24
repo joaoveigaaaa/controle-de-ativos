@@ -81,7 +81,7 @@ de forma mais simples e organizada.
 
 ## 📌 Aplicação prática
 
-O sistema foi desenvolvido pensando em um cenário real de empresa, com foco em **controle de ativos, automação de processos e organização de dados**.
+O sistema foi desenvolvido pensando em um cenário real da empresa, com foco em **controle de ativos, automação de processos e organização de dados**.
 
 A aplicação pode ser utilizada durante inventários para localizar equipamentos, verificar informações cadastrais e manter uma base centralizada dos ativos da empresa.
 
