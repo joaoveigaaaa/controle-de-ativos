@@ -1,53 +1,99 @@
-# Luxafit — equipamentos
+# Luxafit — Controle de Equipamentos
 
-O `templates/index.html` usa o HTML fornecido, preservando seu CSS, layout, cadastro, importação Excel e inventário. O envio de foto foi substituído pelo scanner com câmera ao vivo. Os scripts estão em arquivos separados para funcionar com as regras de segurança do servidor.
+Sistema desenvolvido para **controle e gestão de equipamentos e ativos da Luxafit**, com o objetivo de centralizar as informações, facilitar o inventário e reduzir processos manuais.
 
-## Iniciar
+## 🎯 Objetivo
 
-Copie `.env.example` para `.env`, preencha os dados do MySQL (ou coloque seu `.env` existente ao lado de `app.py`) e execute `iniciar.bat`. O navegador abrirá no endereço correto. Se a porta 5000 estiver ocupada por outra versão, o sistema escolhe a próxima porta livre e informa o endereço no terminal. O programa não cria nem sobrescreve seu `.env`. Mantenha o terminal aberto. A primeira instalação das dependências precisa de internet.
+O projeto foi desenvolvido para tornar o controle de equipamentos **mais rápido, organizado e confiável**.
 
-## MySQL existente
+A aplicação permite cadastrar, consultar e acompanhar equipamentos através de informações como:
 
-Os padrões agora correspondem ao SQL do repositório: **banco `numero_de_serie`, tabela `ativos`, coluna de série `numero`**. Podem ser ajustados no `.env` por `MYSQL_DATABASE`, `MYSQL_TABLE` e `MYSQL_SERIAL_COLUMN`. Se essas variáveis existirem no seu `.env` com os nomes antigos invertidos, corrija-as. O sistema também reconhece `dp` como Departamento e `nome_responsavel` como Responsável.
+* Número de série
+* Equipamento
+* Categoria
+* Status
+* Matrícula
+* Departamento
+* Responsável
+* Sede
+* Data de garantia
 
-Variáveis aceitas: `MYSQL_HOST` ou `DB_HOST`; `MYSQL_PORT` ou `DB_PORT` (padrão 3306); `MYSQL_DATABASE`, `DB_NAME` ou `MYSQL_DB`; `MYSQL_USER` ou `DB_USER`; `MYSQL_PASSWORD` ou `DB_PASSWORD`. `PORT` define a porta do Python (padrão 5000).
+A proposta é substituir controles descentralizados e processos manuais por um sistema centralizado, facilitando o acesso às informações e dando maior visibilidade sobre os ativos da empresa.
 
-A aplicação não cria banco nem altera a estrutura de tabelas. Agora consulta **e cadastra** registros. O usuário MySQL precisa de SELECT e INSERT; a tabela deve usar um mecanismo transacional como InnoDB e ter índice UNIQUE na coluna da série para impedir duplicidades entre aplicações concorrentes.
+## 🚀 Principais funcionalidades
 
-O sistema identifica as colunas existentes com `SHOW COLUMNS`. Para o nome do ativo, reconhece `ativo`, `nome`, `equipamento`, `descricao` ou `produto`; para Sede, `sede` ou `empresa`. Outros campos correspondem aos nomes do formulário. Se os nomes forem diferentes, adicione no `.env` um mapeamento JSON, por exemplo:
+### 📋 Cadastro de equipamentos
 
-```dotenv
-MYSQL_FIELD_MAP='{"ativo":"nome_equipamento","sede":"empresa"}'
-```
+Permite registrar novos equipamentos e suas respectivas informações no sistema.
 
-Os nomes à direita devem existir na sua tabela. Um campo preenchido sem coluna correspondente impede a gravação e mostra uma mensagem; dados não são descartados silenciosamente. Campos obrigatórios adicionais no banco precisam ter valor padrão ou correspondência com o formulário. Não foi possível conferir o esquema nem conectar ao banco da empresa neste computador.
+### 🔎 Consulta por número de série
 
-## Scanner
+Busca rápida de equipamentos através do número de série.
 
-Clique em Iniciar câmera, autorize o acesso e enquadre o código de barras ou QR da série. A primeira abertura identifica as webcams disponíveis. Para trocar, pare a câmera, selecione outra no campo Câmera disponível e abra novamente. A consulta é automática. A câmera para após capturar; Nova leitura a reabre. O botão Iniciar câmera lê códigos de barras e QR automaticamente; para texto impresso, use Ler série impressa conforme descrito abaixo. No navegador usado para testar a interface, nenhuma câmera foi detectada; a captura física ainda precisa ser confirmada no navegador com acesso à webcam. Localhost funciona no próprio computador; uso em celular pela rede exige configuração adicional de HTTPS e acesso.
+### 📷 Leitura por câmera
 
-O leitor de códigos html5-qrcode está incluído em `static/vendor`, junto da licença. Códigos de barras e QR são processados no navegador.
+O sistema permite utilizar a câmera para:
 
-Para **letras e números impressos**, abra a câmera, aproxime a etiqueta e clique em **Ler série impressa**. Um quadro é enviado ao Python local para OCR com RapidOCR; a imagem não é salva nem enviada a serviços externos. Confira os candidatos e clique no número correto para consultar. O reconhecimento não substitui O por 0 nem I por 1 automaticamente; corrija no campo de consulta se a impressão estiver ambígua. Iluminação e foco influenciam o resultado.
+* Ler códigos de barras
+* Ler QR Codes
+* Identificar números de série impressos através de OCR
 
-## Executar com python app.py
+Isso facilita a localização e conferência dos equipamentos durante o inventário.
 
-O comando `python app.py` agora prepara e usa automaticamente o Python de `.venv`, instalando as dependências faltantes nesse ambiente antes de iniciar o servidor. Assim, o Python global não precisa ter `dotenv` instalado. O pacote correto é `python-dotenv`, listado em requirements.txt. A primeira execução ou instalação do OCR precisa de internet.
+### 📊 Inventário
 
-## Excel
+Centralização dos equipamentos cadastrados, permitindo visualizar e consultar os ativos de forma organizada.
 
-Se aparecer HTTP 405 ou HTTP 404 ao selecionar uma planilha, o endereço aberto não está disponibilizando as rotas da API. Feche a página e execute `iniciar.bat` desta pasta; use a página aberta por ele. Não abra `templates/index.html` diretamente nem pelo Live Server do editor, pois isso não executa o servidor Python. O botão Importar só é habilitado depois que a leitura da planilha termina com sucesso; erros de leitura permanecem visíveis.
+### 📥 Importação de Excel
 
-Baixe o modelo pela área de importação. Os cabeçalhos são detectados nas primeiras 30 linhas da primeira aba, aceitando também nomes equivalentes como Equipamento, Serial e Número. O modelo utiliza: Ativo, Número de série, Categoria, Status, Matrícula, Data de garantia, Departamento, Responsável, Sede. Ativo e Número de série são obrigatórios. Série e matrícula devem ser texto para preservar zeros; formatos numéricos compostos por zeros também são reconhecidos. Datas podem ser células de data ou textos AAAA-MM-DD / DD/MM/AAAA. Converta fórmulas em valores. Colunas desconhecidas não são importadas.
+Permite importar diversos equipamentos de uma planilha, facilitando a migração e atualização de dados.
 
-A importação valida todas as linhas antes de gravar, ignora séries existentes e usa uma transação. Limites: 20 MB, 10.000 registros e 100 colunas.
+### 📤 Exportação de Excel
 
-Ao clicar em Exportar Excel, o sistema consulta o banco e baixa a planilha preenchida com todos os campos do formulário e as colunas adicionais da tabela. A aba Equipamentos contém uma linha por série, comparando sem diferenças de maiúsculas/minúsculas e espaços nas pontas. Valores iguais em campos de equipamentos diferentes, como Sede ou Categoria, permanecem porque são dados válidos.
+Os dados dos equipamentos podem ser exportados para uma planilha para análises, conferências e controles internos.
 
-Quando há registros duplicados, prioriza a data de atualização/cadastro mais recente e depois o maior ID; sem esses campos, prioriza o registro mais completo. Campos vazios são completados com valores disponíveis nas outras ocorrências. Valores conflitantes são preservados na aba Divergências para revisão. Itens diferentes sem série não são mesclados. Nada é excluído ou alterado no banco. Se o banco estiver inacessível, aparece uma mensagem e nenhum arquivo vazio é baixado.
+### 🏢 Controle por sede e departamento
 
-## Verificação
+Os equipamentos podem ser associados às suas respectivas sedes, departamentos e responsáveis, facilitando a identificação de onde cada ativo está localizado.
 
-Execute `.\.venv\Scripts\python -m unittest discover -s tests -v`. Os testes usam MySQL simulado e não acessam o banco da empresa.
+## 💡 Problema que o projeto busca resolver
 
-Se tiver Node instalado, `node --test tests/camera.test.cjs` testa o controle da câmera com um dispositivo simulado.
+O controle de equipamentos pode envolver diversas planilhas, conferências manuais e consultas demoradas.
+
+Este projeto busca centralizar esse processo em uma única aplicação, permitindo que a equipe consiga:
+
+**Cadastrar → Identificar → Consultar → Controlar → Inventariar**
+
+de forma mais simples e organizada.
+
+## 🛠️ Tecnologias utilizadas
+
+* **Python**
+* **Flask**
+* **MySQL**
+* **HTML**
+* **CSS**
+* **JavaScript**
+* **Pandas**
+* **OCR**
+* **Leitura de códigos de barras e QR Code**
+* **Excel**
+
+## 📌 Aplicação prática
+
+O sistema foi desenvolvido pensando em um cenário real de empresa, com foco em **controle de ativos, automação de processos e organização de dados**.
+
+A aplicação pode ser utilizada durante inventários para localizar equipamentos, verificar informações cadastrais e manter uma base centralizada dos ativos da empresa.
+
+## 📈 Próximos passos
+
+O projeto pode evoluir com novas funcionalidades, como:
+
+* Dashboard de indicadores
+* Histórico de movimentação dos equipamentos
+* Controle de empréstimos e devoluções
+* Alertas de garantia
+* Relatórios gerenciais
+* Integração com Power BI
+* Controle de usuários e permissões
+* Histórico completo de alterações
