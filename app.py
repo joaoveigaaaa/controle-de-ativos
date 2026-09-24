@@ -1,4 +1,3 @@
-"""Entrada do sistema: python app.py usa automaticamente o ambiente do projeto."""
 from pathlib import Path
 import importlib.util
 import os
