@@ -1,4 +1,3 @@
-"""OCR local de um quadro da câmera; imagens não são gravadas."""
 from io import BytesIO
 import re
 import threading
@@ -8,7 +7,7 @@ from flask import jsonify, request
 def extract_candidates(texts):
     found = []
     for text in texts:
-        # Preserve letters, zeroes and separators. Do not guess O/0 or I/1.
+ 
         for value in re.findall(r'[A-Za-z0-9][A-Za-z0-9._/-]{2,99}', text):
             value = value.strip('._/-')
             if len(value) >= 3 and any(c.isdigit() for c in value) and value not in found:
