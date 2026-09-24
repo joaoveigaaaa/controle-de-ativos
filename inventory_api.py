@@ -1,4 +1,3 @@
-"""APIs do HTML de equipamentos, usando exclusivamente o MySQL existente."""
 from contextlib import contextmanager
 from datetime import date, datetime
 from io import BytesIO
