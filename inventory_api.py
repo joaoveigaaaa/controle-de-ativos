@@ -299,6 +299,8 @@ def register_inventory(app, configuration, connect, env):
                         if re.fullmatch('0+', cell.number_format):
                             value = value.zfill(len(cell.number_format))
                     raw[field] = value
+                if not str(raw.get('numero_serie') or '').strip():
+                    raw['numero_serie'] = f'-{number}'
                 try:
                     records.append(validate(raw))
                 except ValueError as error:
