@@ -97,3 +97,9 @@ O projeto pode evoluir com novas funcionalidades, como:
 * Integração com Power BI
 * Controle de usuários e permissões
 * Histórico completo de alterações
+
+## Exclusão e download
+
+No Inventário, use a lixeira Excluir ao lado do equipamento e confirme. A exclusão é permanente e exige permissão DELETE no MySQL. Séries duplicadas ou equipamentos vinculados a outros registros bloqueiam a operação.
+
+Após Exportar Excel, se o navegador não iniciar o download automaticamente, clique em Baixar Excel na mensagem de resultado. A exportação exige conexão com o MySQL e permissão SELECT.

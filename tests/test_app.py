@@ -37,6 +37,11 @@ class InventoryTests(unittest.TestCase):
             columns = [x.strip().strip('`') for x in sql.split('(', 1)[1].split(')', 1)[0].split(',')]
             self.records.append(dict(zip(columns, args)))
             rows = []
+        elif sql.startswith('DELETE'):
+            before = len(self.records)
+            self.records[:] = [r for r in self.records if r['numero'] != args[0]]
+            self.cursor.rowcount = before - len(self.records)
+            rows = []
         else:
             raise AssertionError(sql)
         self.cursor.fetchall.return_value = deepcopy(rows)
@@ -87,6 +92,44 @@ class InventoryTests(unittest.TestCase):
         self.add()
         self.assertEqual(self.add().status_code, 409)
         self.assertEqual(len(self.records), 1)
+
+    def test_delete_only_selected_equipment_and_missing(self):
+        self.add('A001')
+        self.add('B002')
+        response = self.client.delete('/api/equipamentos', json={'numero_serie':'A001'})
+        self.assertEqual(response.status_code, 200, response.json)
+        self.assertEqual([r['numero'] for r in self.records], ['B002'])
+        self.assertEqual(self.client.delete('/api/equipamentos', json={'numero_serie':'A001'}).status_code, 404)
+
+    def test_delete_ambiguous_series_is_rejected(self):
+        self.records[:] = [dict(numero='X'), dict(numero='X')]
+        response = self.client.delete('/api/equipamentos', json={'numero_serie':'X'})
+        self.assertEqual(response.status_code, 409)
+        self.assertEqual(len(self.records), 2)
+
+    def test_delete_cross_origin_is_rejected(self):
+        response = self.client.delete('/api/equipamentos', json={'numero_serie':'A'}, headers={'Origin':'https://other.example'})
+        self.assertEqual(response.status_code, 403)
+        self.connect.assert_not_called()
+
+    def test_delete_failure_rolls_back(self):
+        self.add('AB01')
+        original = self.execute
+        def fail_delete(sql, args=()):
+            original(sql, args)
+            if sql.startswith('DELETE'):
+                raise mysql.connector.Error(errno=1451)
+        self.cursor.execute.side_effect = fail_delete
+        result = self.client.delete('/api/equipamentos', json={'numero_serie':'AB01'})
+        self.assertEqual(result.status_code, 409)
+        self.assertEqual(self.records[0]['numero'], 'AB01')
+
+    def test_logo_is_served_from_static(self):
+        self.assertIn('src="/static/logo_luxafit.png"', self.client.get('/').get_data(as_text=True))
+        response = self.client.get('/static/logo_luxafit.png')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.mimetype, 'image/png')
+        response.close()
 
     def test_absent_serial_and_sql_parameter(self):
         result = self.client.get('/api/consulta', query_string={'serie': "' OR 1=1 --"})

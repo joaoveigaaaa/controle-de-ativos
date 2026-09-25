@@ -58,7 +58,7 @@ def create_app(settings=None, connector=None):
 
     @app.before_request
     def local_only():
-        if request.method == 'POST' and request.headers.get('Origin') not in (None, request.host_url.rstrip('/')):
+        if request.method in ('POST', 'PUT', 'PATCH', 'DELETE') and request.headers.get('Origin') not in (None, request.host_url.rstrip('/')):
             return jsonify(erro='Origem da solicitação inválida.'), 403
         if request.host.split(':')[0] not in ('127.0.0.1', 'localhost'):
             return jsonify(erro='Abra o sistema pelo endereço local.'), 403
@@ -88,7 +88,9 @@ def create_app(settings=None, connector=None):
         if error.errno == 1062:
             return jsonify(erro='Já existe um registro com essa série ou outro campo único.'), 409
         if error.errno in (1044, 1045, 1142):
-            message = 'O MySQL recusou a operação. Confira o usuário e as permissões de consulta e cadastro.'
+            message = 'O MySQL recusou a operação. Confira o usuário e as permissões SELECT (consulta/exportação), INSERT (cadastro) e DELETE (exclusão).'
+        elif error.errno == 1451:
+            return jsonify(erro='Este equipamento possui registros vinculados no banco e não pode ser excluído.'), 409
         elif error.errno in (1049, 1054, 1146):
             message = 'Confira os nomes do banco, tabela e coluna no arquivo .env.'
         elif error.errno in (1364, 1048, 1406, 1265, 1292):

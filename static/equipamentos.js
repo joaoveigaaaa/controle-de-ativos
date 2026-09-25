@@ -70,7 +70,7 @@
 
       let dados;
 
-      if (resposta.status === 405 || resposta.status === 404) {
+      if (resposta.status === 405 || (resposta.status === 404 && opcoes.method !== 'DELETE')) {
         throw new Error(
           `Este endereço não disponibiliza a API de equipamentos (HTTP ${resposta.status}). Feche esta página, execute iniciar.bat na pasta controle de ativo e use a página aberta por ele. Abrir index.html diretamente ou pelo Live Server não executa o Python.`
         );
@@ -118,7 +118,7 @@
       const linha = criar("tr");
       const celula = criar("td", texto);
 
-      celula.colSpan = COLUNAS.length;
+      celula.colSpan = COLUNAS.length + 1;
       linha.append(celula);
 
       return linha;
@@ -147,6 +147,33 @@
           for (const [campo] of COLUNAS) {
             linha.append(criar("td", valor(registro, campo)));
           }
+
+          const acoes = criar('td');
+          const excluir = criar('button', '🗑 Excluir', 'button');
+          excluir.type = 'button';
+          excluir.title = `Excluir ${registro.ativo} — ${registro.numero_serie}`;
+          excluir.setAttribute('aria-label', excluir.title);
+          excluir.disabled = !registro.numero_serie;
+          excluir.addEventListener('click', async () => {
+            if (!window.confirm(`Excluir o equipamento ${registro.ativo}, série ${registro.numero_serie}? Esta ação não pode ser desfeita.`)) return;
+            excluir.disabled = true;
+            try {
+              await api('/api/equipamentos', {method:'DELETE', headers:{'Content-Type':'application/json'}, body:JSON.stringify({numero_serie:registro.numero_serie})});
+            } catch (error) {
+              mensagem('mensagem-inventario', textoErro(error), 'error');
+              excluir.disabled = false;
+              return;
+            }
+            try {
+              await carregarInventario();
+              limparFicha('Equipamento excluído. Faça uma nova consulta.');
+              mensagem('mensagem-inventario', 'Equipamento excluído.', 'success');
+            } catch (_) {
+              mensagem('mensagem-inventario', 'Equipamento excluído. Clique em Atualizar para recarregar a lista.', 'success');
+            }
+          });
+          acoes.append(excluir);
+          linha.append(acoes);
 
           fragmento.append(linha);
         }
@@ -553,6 +580,7 @@
     carregarInventario().catch(() => {});
 
     let exportando = false;
+    let ultimoDownload = null;
     $('#exportar-excel').addEventListener('click', async (event) => {
       event.preventDefault();
       if (exportando) return;
@@ -564,19 +592,27 @@
       try {
         const response = await fetch('/api/excel/exportar', {cache:'no-store'});
         if (!response.ok) {
-          const data = await response.json();
-          throw new Error(data.erro || 'Não foi possível exportar.');
+          const data = await response.json().catch(() => ({}));
+          throw new Error(data.erro || `Não foi possível exportar (HTTP ${response.status}). Execute iniciar.bat e use o endereço informado pelo Python.`);
+        }
+        if (!(response.headers.get('Content-Type') || '').includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
+          throw new Error('O endereço retornou uma página em vez do Excel. Execute iniciar.bat e use o endereço informado pelo Python.');
         }
         const blob = await response.blob();
+        if (ultimoDownload) URL.revokeObjectURL(ultimoDownload);
         const url = URL.createObjectURL(blob);
+        ultimoDownload = url;
         const link = document.createElement('a');
         link.href = url; link.download = 'inventario-equipamentos.xlsx';
         document.body.append(link); link.click(); link.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 60000);
         const total = response.headers.get('X-Export-Registros') || '0';
         const duplicates = response.headers.get('X-Export-Repetidos') || '0';
         const conflicts = Number(response.headers.get('X-Export-Divergencias') || 0);
         mensagem('mensagem-inventario', `${total} equipamento(s) exportado(s). ${duplicates} repetição(ões) consolidada(s).` + (conflicts ? ' Confira os valores diferentes na aba Divergências.' : ''), 'success');
+        const manual = criar('a', 'Baixar Excel');
+        manual.href = url;
+        manual.download = 'inventario-equipamentos.xlsx';
+        $('#mensagem-inventario').append(document.createTextNode(' Se o download não iniciou, clique em '), manual);
       } catch (error) {
         mensagem('mensagem-inventario', error instanceof TypeError ? 'Sem conexão com o sistema. Confira se o Python está em execução.' : textoErro(error), 'error');
       } finally {
