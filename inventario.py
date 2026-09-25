@@ -3,7 +3,6 @@ import pandas as pd
 
 pasta_projeto = r"C:\Users\Luxafit\Desktop\controle-de-ativos"
 
-# 1. Localizar o arquivo Excel
 ficheiros = [f for f in os.listdir(pasta_projeto) if f.endswith(('.xlsx', '.xls', '.csv')) and not f.startswith('Inventario_Limpo')]
 
 if not ficheiros:
@@ -13,7 +12,6 @@ if not ficheiros:
 caminho_excel = os.path.join(pasta_projeto, ficheiros[0])
 print(f"Lendo o ficheiro: {caminho_excel}")
 
-# 2. Identificar aba e carregar dados brutos
 aba_correta = None
 if caminho_excel.endswith('.csv'):
     df_raw = pd.read_csv(caminho_excel, header=None)
@@ -27,7 +25,6 @@ else:
             
     df_raw = pd.read_excel(caminho_excel, sheet_name=aba_correta, header=None)
 
-# 3. Encontrar a linha do cabeçalho
 colunas_chave = ['ativo', 'número de série', 'numero', 'categoria', 'status', 'matrícula', 'matricula', 'responsável', 'colaborador', 'empresa', 'sede']
 linha_cabecalho = None
 
@@ -40,54 +37,42 @@ for idx, row in df_raw.iterrows():
 if linha_cabecalho is None:
     linha_cabecalho = 0
 
-# 4. Recarregar dados a partir da linha correta
 if caminho_excel.endswith('.csv'):
     df = pd.read_csv(caminho_excel, skiprows=linha_cabecalho)
 else:
     df = pd.read_excel(caminho_excel, sheet_name=aba_correta, skiprows=linha_cabecalho)
 
-# Remover colunas vazias/resumos
 df = df.loc[:, ~df.columns.astype(str).str.contains('^Unnamed|^COUNTA|Total|Soma', case=False, na=False)]
 
-# --- DIAGNÓSTICO: MOSTRAR NOMES REAIS DAS COLUNAS DA PLANILHA ORIGINAL ---
 print("\n" + "="*60)
 print("CABEÇALHOS ENCONTRADOS NA SUA PLANILHA ORIGINAL:")
 for i, col in enumerate(df.columns):
     print(f" [{i}] -> '{col}'")
 print("="*60 + "\n")
 
-# 5. MAPEAMENTO EXPANDIDO (Colaborador / Responsável)
 mapeamento_colunas = {
-    # Ativo
+ 
     'Ativo': 'ativo', 'Nome Ativo': 'ativo', 'Equipamento': 'ativo', 'Item': 'ativo', 'Descrição': 'ativo', 'Descricao': 'ativo',
-    
-    # Número de Série
+
     'Número de série': 'numero', 'Numero de serie': 'numero', 'Nº de Série': 'numero', 'N/S': 'numero', 'Serial': 'numero', 'Série': 'numero',
-    
-    # Categoria
+
     'Categoria': 'categoria', 'Tipo': 'categoria',
-    
-    # Status
+
     'Status': 'status', 'Estado': 'status', 'Situação': 'status', 'Situacao': 'status',
-    
-    # Matrícula
+
     'Matrícula': 'matricula', 'Matricula': 'matricula', 'RE': 'matricula', 'ID Colaborador': 'matricula',
-    
-    # Data de Garantia
+
     'Data de garantia': 'data_garantia', 'Data Garantia': 'data_garantia', 'Garantia': 'data_garantia',
-    
-    # Departamento
+
     'Departamento': 'dp', 'DP': 'dp', 'Setor': 'dp', 'Área': 'dp', 'Area': 'dp',
-    
-    # Responsável / Colaborador (TODAS AS POSSÍVEIS VARIAÇÕES)
+ 
     'Responsável': 'nome_responsavel', 'Responsavel': 'nome_responsavel', 
     'Nome Responsável': 'nome_responsavel', 'Nome Responsavel': 'nome_responsavel', 
     'Colaborador': 'nome_responsavel', 'Nome Colaborador': 'nome_responsavel', 'Nome do Colaborador': 'nome_responsavel',
     'Atribuído a': 'nome_responsavel', 'Atribuido a': 'nome_responsavel',
     'Usuario': 'nome_responsavel', 'Usuário': 'nome_responsavel', 'Nome Usuário': 'nome_responsavel',
     'Funcionário': 'nome_responsavel', 'Funcionario': 'nome_responsavel', 'Nome': 'nome_responsavel',
-    
-    # Sede / Empresa
+ 
     'Sede': 'sede', 'Empresa': 'sede', 'Nome Empresa': 'sede', 'Local': 'sede', 
     'Unidade': 'sede', 'Filial': 'sede', 'Planta': 'sede', 'Localidade': 'sede', 'Sede/Empresa': 'sede'
 }
@@ -106,7 +91,6 @@ for col in df.columns:
 
 df = df.rename(columns=novas_colunas)
 
-# Manter apenas as colunas estruturadas para o banco
 colunas_mysql = ['ativo', 'numero', 'categoria', 'status', 'matricula', 'data_garantia', 'dp', 'nome_responsavel', 'sede']
 colunas_presentes = [c for c in colunas_mysql if c in df.columns]
 df = df[colunas_presentes]
@@ -122,7 +106,6 @@ if 'ativo' in df.columns:
 if 'data_garantia' in df.columns:
     df['data_garantia'] = pd.to_datetime(df['data_garantia'], errors='coerce').dt.strftime('%Y-%m-%d')
 
-# 7. Salvar resultado final
 caminho_saida = os.path.join(pasta_projeto, "Inventario_Limpo.xlsx")
 
 try:

@@ -1,4 +1,3 @@
-"""APIs do HTML de equipamentos, usando exclusivamente o MySQL existente."""
 from contextlib import contextmanager
 from datetime import date, datetime
 from io import BytesIO
@@ -174,6 +173,31 @@ def register_inventory(app, configuration, connect, env):
                 return jsonify(erro='Há mais de um ativo com esta série. Confira os registros no MySQL.'), 409
             return jsonify(registros=[record(r, mapping) for r in rows])
 
+    @app.delete('/api/equipamentos')
+    def delete_equipment():
+        data = request.get_json(silent=True)
+        serial_value = data.get('numero_serie') if isinstance(data, dict) else None
+        if not isinstance(serial_value, str) or not serial_value.strip() or len(serial_value) > 100:
+            raise ValueError('Informe o número de série do equipamento a excluir.')
+        with database() as (connection, cursor, table, serial):
+            connection.start_transaction()
+            try:
+                cursor.execute(f'SELECT `{serial}` FROM `{table}` WHERE `{serial}` = %s FOR UPDATE', (serial_value,))
+                matches = cursor.fetchall()
+                if len(matches) != 1:
+                    connection.rollback()
+                    if not matches:
+                        return jsonify(erro='Equipamento não encontrado. Atualize o inventário.'), 404
+                    return jsonify(erro='Há equipamentos com a mesma série. Corrija a duplicidade no banco antes de excluir.'), 409
+                cursor.execute(f'DELETE FROM `{table}` WHERE `{serial}` = %s', (serial_value,))
+                if cursor.rowcount != 1:
+                    raise ValueError('A exclusão não identificou um único equipamento. Atualize o inventário.')
+                connection.commit()
+            except Exception:
+                connection.rollback()
+                raise
+        return jsonify(mensagem='Equipamento excluído.')
+
     @app.post('/api/equipamentos')
     def register():
         item = validate(request.get_json())
@@ -275,6 +299,8 @@ def register_inventory(app, configuration, connect, env):
                         if re.fullmatch('0+', cell.number_format):
                             value = value.zfill(len(cell.number_format))
                     raw[field] = value
+                if not str(raw.get('numero_serie') or '').strip():
+                    raw['numero_serie'] = f'-{number}'
                 try:
                     records.append(validate(raw))
                 except ValueError as error:

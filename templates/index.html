@@ -547,7 +547,7 @@
   <header class="header">
     <div class="header-inner">
       <a href="#consulta" aria-label="Luxafit — início">
-        <img class="logo" src="/logo_luxafit.png" alt="Luxafit Transportes" width="198" height="178">
+        <img class="logo" src="{{ url_for('static', filename='logo_luxafit.png') }}" alt="Luxafit Transportes" width="198" height="178">
       </a>
 
       <nav aria-label="Menu principal">
@@ -864,12 +864,13 @@
               <th scope="col">Departamento</th>
               <th scope="col">Responsável</th>
               <th scope="col">Sede</th>
+              <th scope="col">Ações</th>
             </tr>
           </thead>
 
           <tbody id="linhas-inventario">
             <tr>
-              <td colspan="9">Carregando inventário...</td>
+              <td colspan="10">Carregando inventário...</td>
             </tr>
           </tbody>
         </table>
