@@ -70,7 +70,7 @@ de forma mais simples e organizada.
 
 * **Python**
 * **Flask**
-* **MySQL**
+* **SQLServer**
 * **HTML**
 * **CSS**
 * **JavaScript**
