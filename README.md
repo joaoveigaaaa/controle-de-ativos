@@ -84,16 +84,3 @@ de forma mais simples e organizada.
 O sistema foi desenvolvido pensando em um cenário real da empresa, com foco em **controle de ativos, automação de processos e organização de dados**.
 
 A aplicação pode ser utilizada durante inventários para localizar equipamentos, verificar informações cadastrais e manter uma base centralizada dos ativos da empresa.
-
-## Próximos passos
-
-O projeto pode evoluir com novas funcionalidades, como:
-
-* Dashboard de indicadores
-* Histórico de movimentação dos equipamentos
-* Controle de empréstimos e devoluções
-* Alertas de garantia
-* Relatórios gerenciais
-* Integração com Power BI
-* Controle de usuários e permissões
-* Histórico completo de alterações
